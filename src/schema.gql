@@ -1,0 +1,126 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BookedSeat {
+  row: Int!
+  seat: Int!
+}
+
+type Booking {
+  createdAt: DateTime!
+  id: ID!
+  seats: [BookedSeat!]!
+  showingId: ID!
+  totalPrice: Int!
+}
+
+input CreateFilmInput {
+  durationMinutes: Int!
+  releaseYear: Int!
+  title: String!
+}
+
+input CreateHallInput {
+  name: String!
+  rows: Int!
+  seatsPerRow: Int!
+}
+
+input CreateShowingInput {
+  filmId: ID!
+  hallId: ID!
+
+  """Price per seat in kopecks (positive integer)"""
+  price: Int!
+  startsAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Film {
+  durationMinutes: Int!
+  id: ID!
+  releaseYear: Int!
+  title: String!
+}
+
+type Hall {
+  id: ID!
+  name: String!
+  rows: Int!
+  seatsPerRow: Int!
+}
+
+type Mutation {
+  cancelBooking(id: ID!): Boolean!
+  createBooking(seats: [SeatInput!]!, showingId: ID!): Booking!
+  createFilm(input: CreateFilmInput!): Film!
+  createHall(input: CreateHallInput!): Hall!
+  createShowing(input: CreateShowingInput!): Showing!
+  deleteFilm(id: ID!): Boolean!
+  deleteHall(id: ID!): Boolean!
+  updateFilm(id: ID!, input: UpdateFilmInput!): Film!
+}
+
+type Query {
+  bookings: [Booking!]!
+  film(id: ID!): Film
+  films: [Film!]!
+  hall(id: ID!): Hall
+  halls: [Hall!]!
+  showing(id: ID!): Showing
+  showings(
+    """Only showings starting on this day (YYYY-MM-DD, UTC)"""
+    date: String
+
+    """Only showings of this film"""
+    filmId: ID
+    limit: Int = 20
+    page: Int = 1
+    sort: SortOrder = ASC
+  ): ShowingPage!
+}
+
+type Seat {
+  isBooked: Boolean!
+  row: Int!
+  seat: Int!
+}
+
+input SeatInput {
+  row: Int!
+  seat: Int!
+}
+
+type Showing {
+  bookings: [Booking!]!
+  film: Film!
+  hall: Hall!
+  id: ID!
+  price: Int!
+  seats: [Seat!]!
+  startsAt: DateTime!
+}
+
+type ShowingPage {
+  items: [Showing!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
+"""Order of showings by start time"""
+enum SortOrder {
+  ASC
+  DESC
+}
+
+input UpdateFilmInput {
+  durationMinutes: Int
+  releaseYear: Int
+  title: String
+}
