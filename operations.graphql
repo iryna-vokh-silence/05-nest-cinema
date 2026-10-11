@@ -1,0 +1,183 @@
+# Приклади GraphQL-операцій сервісу.
+# Виконуйте їх у пісочниці Apollo на http://localhost:3000/graphql
+# (підставивши власні id там, де це потрібно).
+
+# ---------------------------------------------------------------- Фільми ---
+
+mutation CreateFilm {
+  createFilm(input: { title: "Interstellar", durationMinutes: 169, releaseYear: 2014 }) {
+    id
+    title
+    durationMinutes
+    releaseYear
+  }
+}
+
+query Films {
+  films {
+    id
+    title
+    releaseYear
+  }
+}
+
+query Film {
+  film(id: "PUT_FILM_ID_HERE") {
+    id
+    title
+  }
+}
+
+mutation UpdateFilm {
+  updateFilm(id: "PUT_FILM_ID_HERE", input: { title: "Interstellar (IMAX)" }) {
+    id
+    title
+  }
+}
+
+mutation DeleteFilm {
+  deleteFilm(id: "PUT_FILM_ID_HERE")
+}
+
+# ------------------------------------------------------------------ Зали ---
+
+mutation CreateHall {
+  createHall(input: { name: "Red Hall", rows: 5, seatsPerRow: 8 }) {
+    id
+    name
+    rows
+    seatsPerRow
+  }
+}
+
+query Halls {
+  halls {
+    id
+    name
+    rows
+    seatsPerRow
+  }
+}
+
+mutation DeleteHall {
+  deleteHall(id: "PUT_HALL_ID_HERE")
+}
+
+# --------------------------------------------------------------- Сеанси ---
+
+mutation CreateShowing {
+  createShowing(
+    input: {
+      filmId: "PUT_FILM_ID_HERE"
+      hallId: "PUT_HALL_ID_HERE"
+      startsAt: "2030-01-15T18:00:00.000Z"
+      price: 15000
+    }
+  ) {
+    id
+    startsAt
+    price
+    film {
+      title
+    }
+    hall {
+      name
+    }
+  }
+}
+
+# Сторінка сеансів з назвами фільмів і залів (фільтр + сортування + пагінація).
+query ShowingsPage {
+  showings(page: 1, limit: 20, sort: ASC) {
+    items {
+      id
+      startsAt
+      price
+      film {
+        title
+      }
+      hall {
+        name
+      }
+    }
+    total
+    page
+    limit
+  }
+}
+
+query ShowingsFiltered {
+  showings(filmId: "PUT_FILM_ID_HERE", date: "2030-01-15", sort: DESC) {
+    total
+    items {
+      id
+      startsAt
+      film {
+        title
+      }
+    }
+  }
+}
+
+# Один сеанс з картою місць і бронюваннями.
+query Showing {
+  showing(id: "PUT_SHOWING_ID_HERE") {
+    id
+    startsAt
+    price
+    film {
+      title
+    }
+    hall {
+      name
+    }
+    seats {
+      row
+      seat
+      isBooked
+    }
+    bookings {
+      id
+      totalPrice
+      seats {
+        row
+        seat
+      }
+    }
+  }
+}
+
+# ---------------------------------------------------------- Бронювання ---
+
+mutation CreateBooking {
+  createBooking(
+    showingId: "PUT_SHOWING_ID_HERE"
+    seats: [{ row: 1, seat: 1 }, { row: 1, seat: 2 }]
+  ) {
+    id
+    showingId
+    totalPrice
+    createdAt
+    seats {
+      row
+      seat
+    }
+  }
+}
+
+query Bookings {
+  bookings {
+    id
+    showingId
+    totalPrice
+    createdAt
+    seats {
+      row
+      seat
+    }
+  }
+}
+
+mutation CancelBooking {
+  cancelBooking(id: "PUT_BOOKING_ID_HERE")
+}
